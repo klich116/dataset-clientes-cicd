@@ -1,8 +1,9 @@
-timestamp_utc,total_registros,registros_validos,registros_invalidos,pct_calidad,pct_consentimiento,duplicados_id,duplicados_telefono,telefonos_formato_invalido,campos_vacios,consentimiento_invalido,total_errores,resultado
-2026-08-02T16:08:38Z,5,5,0,100.0,80.0,0,0,0,0,0,0,EXITOSA
-2026-08-02T16:08:43Z,7,5,2,71.4,71.4,1,1,1,0,1,4,FALLIDA
-2026-08-02T16:08:43Z,5,5,0,100.0,80.0,0,0,0,0,0,0,EXITOSA
-2026-08-02T16:16:19Z,5,5,0,100.0,80.0,0,0,0,0,0,0,EXITOSA
-2026-08-02T21:13:41Z,6,6,0,100.0,83.3,0,0,0,0,0,0,EXITOSA
-2026-08-02T21:18:34Z,7,7,0,100.0,85.7,0,0,0,0,0,0,EXITOSA
-2026-08-02T21:24:23Z,8,8,0,100.0,87.5,0,0,0,0,0,0,EXITOSA
+timestamp_utc,autor,total_registros,registros_validos,registros_invalidos,pct_calidad,pct_consentimiento,duplicados_id,duplicados_telefono,telefonos_formato_invalido,campos_vacios,consentimiento_invalido,total_errores,resultado
+2026-08-02T16:08:38Z,sin registrar,5,5,0,100.0,80.0,0,0,0,0,0,0,EXITOSA
+2026-08-02T16:08:43Z,sin registrar,7,5,2,71.4,71.4,1,1,1,0,1,4,FALLIDA
+2026-08-02T16:08:43Z,sin registrar,5,5,0,100.0,80.0,0,0,0,0,0,0,EXITOSA
+2026-08-02T16:16:19Z,sin registrar,5,5,0,100.0,80.0,0,0,0,0,0,0,EXITOSA
+2026-08-02T21:13:41Z,sin registrar,6,6,0,100.0,83.3,0,0,0,0,0,0,EXITOSA
+2026-08-02T21:18:34Z,sin registrar,7,7,0,100.0,85.7,0,0,0,0,0,0,EXITOSA
+2026-08-02T21:24:23Z,sin registrar,8,8,0,100.0,87.5,0,0,0,0,0,0,EXITOSA
+2026-08-02T21:37:52Z,corrida local,8,8,0,100.0,87.5,0,0,0,0,0,0,EXITOSA
