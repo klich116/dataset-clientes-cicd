@@ -1,15 +1,15 @@
-"""Construye el tablero de KPI's a partir del historico de calidad.
+"""Construye el tablero de KPI's a partir del histórico de calidad.
 
 Esta es la pieza central del segundo ejercicio: convierte el archivo
 data/metricas/historico_calidad.csv, que va creciendo corrida tras
-corrida gracias a validate_dataset.py, en una pagina HTML que cualquier
+corrida gracias a validate_dataset.py, en una página HTML que cualquier
 persona del equipo de negocio puede abrir con doble clic o consultar
 publicada en GitHub Pages, sin instalar nada ni depender de quien
-programo el pipeline.
+programó el pipeline.
 
-El tablero muestra el estado mas reciente del dataset, la tendencia de
-calidad en el tiempo y, debajo, una tabla cronologica con cada corrida
-registrada, que funciona como bitacora de auditoria.
+El tablero muestra el estado más reciente del dataset, la tendencia de
+calidad en el tiempo y, debajo, una tabla cronológica con cada corrida
+registrada, que funciona como bitácora de auditoría.
 """
 
 import csv
@@ -20,9 +20,9 @@ CARPETA_PROYECTO = Path(__file__).resolve().parent.parent
 RUTA_HISTORICO = CARPETA_PROYECTO / "data" / "metricas" / "historico_calidad.csv"
 RUTA_TABLERO = CARPETA_PROYECTO / "data" / "metricas" / "dashboard_kpis.html"
 
-# Paleta del tablero: fondo casi negro con acentos en cian y ambar, en vez
-# del clasico blanco-con-sombritas de los dashboards genericos. El cian
-# marca lo que va bien, el ambar lo que vale la pena vigilar.
+# Paleta del tablero: fondo casi negro con acentos en cian y ámbar, en vez
+# del clásico blanco-con-sombritas de los dashboards genéricos. El cian
+# marca lo que va bien, el ámbar lo que vale la pena vigilar.
 COLOR_FONDO = "#0b0e14"
 COLOR_SUPERFICIE = "#12161f"
 COLOR_BORDE = "rgba(255,255,255,0.08)"
@@ -34,7 +34,7 @@ COLOR_FALLA = "#fb7185"
 
 def cargar_historico():
     if not RUTA_HISTORICO.exists():
-        print(f"Todavia no existe {RUTA_HISTORICO}. Hay que correr validate_dataset.py primero.")
+        print(f"Todavía no existe {RUTA_HISTORICO}. Hay que correr validate_dataset.py primero.")
         sys.exit(1)
     with open(RUTA_HISTORICO, newline="", encoding="utf-8") as archivo:
         return list(csv.DictReader(archivo))
@@ -71,12 +71,12 @@ def construir_fila(corrida: dict) -> str:
 
 
 def construir_grafico_tendencia(historico: list) -> str:
-    """Dibuja un grafico de area con el porcentaje de calidad de cada corrida.
+    """Dibuja un gráfico de área con el porcentaje de calidad de cada corrida.
 
-    Sigue siendo SVG puro, sin librerias externas, para que el archivo se
-    pueda abrir sin conexion a internet. El relieve bajo la linea usa un
+    Sigue siendo SVG puro, sin librerías externas, para que el archivo se
+    pueda abrir sin conexión a internet. El relieve bajo la línea usa un
     degradado que se apaga hacia abajo, y los puntos se pintan del color
-    del resultado para detectar de un vistazo en que corrida hubo problemas.
+    del resultado para detectar de un vistazo en qué corrida hubo problemas.
     """
     ancho = max(560, len(historico) * 70)
     alto = 200
@@ -139,9 +139,9 @@ def calcular_resumen(historico: list) -> dict:
 
 
 # El CSS vive aparte del f-string principal para no tener que duplicar
-# cada llave de la hoja de estilos. La tipografia mezcla una serif para
-# los titulos (le da caracter editorial, no de plantilla generica) con
-# una monoespaciada para los numeros (asi se leen como datos, no como texto).
+# cada llave de la hoja de estilos. La tipografía mezcla una serif para
+# los títulos (le da carácter editorial, no de plantilla genérica) con
+# una monoespaciada para los números (así se leen como datos, no como texto).
 ESTILO = """
 <style>
   * { box-sizing: border-box; }
@@ -209,9 +209,9 @@ def armar_pagina(historico: list) -> str:
     resumen = calcular_resumen(historico)
     ultima = resumen["ultima_corrida"]
 
-    # La tabla se muestra de la corrida mas reciente a la mas antigua,
+    # La tabla se muestra de la corrida más reciente a la más antigua,
     # que es el orden en que alguien de negocio normalmente la revisa. El
-    # grafico, en cambio, va de mas antigua a mas reciente porque asi se
+    # gráfico, en cambio, va de más antigua a más reciente porque así se
     # lee una tendencia en el tiempo, de izquierda a derecha.
     filas_tabla = "\n".join(construir_fila(c) for c in reversed(historico))
     grafico_tendencia = construir_grafico_tendencia(historico)
@@ -221,41 +221,41 @@ def armar_pagina(historico: list) -> str:
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>KPI's - Dataset de telefonos de clientes</title>
+<title>KPI's - Dataset de teléfonos de clientes</title>
 {ESTILO}
 </head>
 <body>
 
   <div class="encabezado">
     <div>
-      <p class="marca">Veeduria de datos &middot; clientes</p>
-      <h1>Calidad y trazabilidad del dataset de telefonos</h1>
+      <p class="marca">Veeduría de datos &middot; clientes</p>
+      <h1>Calidad y trazabilidad del dataset de teléfonos</h1>
     </div>
-    <div class="en-vivo"><span class="punto-vivo"></span>actualizado en cada corrida del pipeline &middot; {ultima['fecha_hora']} (hora Bogot&aacute;)</div>
+    <div class="en-vivo"><span class="punto-vivo"></span>actualizado en cada corrida del pipeline &middot; {ultima['fecha_hora']} (hora Bogotá)</div>
   </div>
 
   <div class="tarjetas">
-    <div class="tarjeta"><div class="valor">{ultima['pct_calidad']}%</div><div class="etiqueta">Calidad, ultima corrida</div></div>
+    <div class="tarjeta"><div class="valor">{ultima['pct_calidad']}%</div><div class="etiqueta">Calidad, última corrida</div></div>
     <div class="tarjeta"><div class="valor">{ultima['pct_consentimiento']}%</div><div class="etiqueta">Consentimiento vigente</div></div>
     <div class="tarjeta"><div class="valor">{ultima['total_registros']}</div><div class="etiqueta">Registros en el dataset</div></div>
-    <div class="tarjeta{' alerta' if hay_invalidos else ''}"><div class="valor">{ultima['registros_invalidos']}</div><div class="etiqueta">Invalidos, ultima corrida</div></div>
-    <div class="tarjeta"><div class="valor">{resumen['tasa_exito']}%</div><div class="etiqueta">Exito del pipeline ({resumen['corridas_exitosas']}/{resumen['total_corridas']})</div></div>
+    <div class="tarjeta{' alerta' if hay_invalidos else ''}"><div class="valor">{ultima['registros_invalidos']}</div><div class="etiqueta">Inválidos, última corrida</div></div>
+    <div class="tarjeta"><div class="valor">{resumen['tasa_exito']}%</div><div class="etiqueta">Éxito del pipeline ({resumen['corridas_exitosas']}/{resumen['total_corridas']})</div></div>
   </div>
 
   <div class="seccion">
     <div class="titulo-seccion"><span class="indice-seccion">01</span><h2>Tendencia de calidad</h2></div>
-    <p class="subtitulo">Porcentaje de registros validos por corrida, de la mas antigua (izquierda) a la mas reciente (derecha)</p>
+    <p class="subtitulo">Porcentaje de registros válidos por corrida, de la más antigua (izquierda) a la más reciente (derecha)</p>
     <div class="panel">{grafico_tendencia}</div>
   </div>
 
   <div class="seccion">
-    <div class="titulo-seccion"><span class="indice-seccion">02</span><h2>Historico de corridas</h2></div>
-    <p class="subtitulo">Bitacora completa: quien hizo el cambio, que tan bien paso la validacion, y si se desplego</p>
+    <div class="titulo-seccion"><span class="indice-seccion">02</span><h2>Histórico de corridas</h2></div>
+    <p class="subtitulo">Bitácora completa: quién hizo el cambio, qué tan bien pasó la validación, y si se desplegó</p>
     <div class="panel tabla-scroll">
       <table>
         <thead>
           <tr>
-            <th>Fecha (Bogot&aacute;)</th><th>Autor</th><th>Total</th><th>Validos</th><th>Invalidos</th>
+            <th>Fecha (Bogotá)</th><th>Autor</th><th>Total</th><th>Válidos</th><th>Inválidos</th>
             <th>% Calidad</th><th>% Consent.</th><th>Dup. ID</th><th>Dup. Tel.</th>
             <th>Tel. inv.</th><th>Consent. inv.</th><th>Resultado</th>
           </tr>
@@ -267,7 +267,7 @@ def armar_pagina(historico: list) -> str:
     </div>
   </div>
 
-  <footer>Generado automaticamente por scripts/generar_kpis.py &middot; no requiere conexion a internet</footer>
+  <footer>Generado automáticamente por scripts/generar_kpis.py &middot; no requiere conexión a internet</footer>
 
 </body>
 </html>
