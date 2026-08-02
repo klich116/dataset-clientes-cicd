@@ -60,6 +60,8 @@ jobs:
     needs: validar
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
+    permissions:
+         contents: write
     steps:
       - name: Descargar el repositorio
         uses: actions/checkout@v4
