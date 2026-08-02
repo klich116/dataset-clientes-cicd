@@ -32,8 +32,13 @@ jobs:
         with:
           python-version: "3.11"
 
+      # AUTOR_CAMBIO se usa dentro de validate_dataset.py para dejar
+      # constancia de quien hizo el push que disparo esta corrida, y asi
+      # completar la trazabilidad de "quien cambio que" en el tablero de KPI's.
       - name: Ejecutar validaciones de calidad
         id: validacion
+        env:
+          AUTOR_CAMBIO: ${{ github.actor }}
         run: python scripts/validate_dataset.py
 
       # Ejercicio 2 (KPI's y trazabilidad): el historico de metricas se
@@ -50,9 +55,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/metricas
-          git diff --cached --quiet || git commit -m "KPI's: registro de metricas de calidad [skip ci]"
-          git pull --rebase origin main
-          git push
+          git diff --cached --quiet || (git commit -m "KPI's: registro de metricas de calidad [skip ci]" && git pull --rebase origin main && git push)
 
   # --- CD: Despliegue Continuo ---
   # Solo corre si "validar" fue exitoso Y el cambio ya esta en main
@@ -63,7 +66,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
-         contents: write
+      contents: write
     steps:
       - name: Descargar el repositorio
         uses: actions/checkout@v4
