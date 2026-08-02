@@ -1,0 +1,81 @@
+name: CI/CD Dataset Clientes Telefonos
+
+# Se dispara en cada push y pull request que toquen el dataset o los scripts.
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "data/**"
+      - "scripts/**"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "data/**"
+      - "scripts/**"
+
+jobs:
+  # --- CI: Integracion Continua ---
+  # Corre en CADA push y CADA pull request, incluso antes de fusionar a main.
+  validar:
+    name: Validar calidad del dataset
+    runs-on: ubuntu-latest
+    # Necesario para poder hacer push del historico de KPI's aunque
+    # la validacion falle (permission del token dentro del job).
+    permissions:
+      contents: write
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Ejecutar validaciones de calidad
+        id: validacion
+        run: python scripts/validate_dataset.py
+
+      # Ejercicio 2 (KPI's y trazabilidad): el historico de metricas se
+      # guarda SIEMPRE, incluso si la validacion fallo (if: always()),
+      # para que el mecanismo de veeduria refleje tambien los intentos
+      # que no cumplieron las reglas de calidad.
+      - name: Regenerar dashboard de KPI's
+        if: always()
+        run: python scripts/generar_kpis.py
+
+      - name: Guardar historico de metricas de calidad
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/metricas
+          git diff --cached --quiet || (git commit -m "KPI's: registro de metricas de calidad [skip ci]" && git push)
+
+  # --- CD: Despliegue Continuo ---
+  # Solo corre si "validar" fue exitoso Y el cambio ya esta en main
+  # (es decir, un push directo a main o un PR ya fusionado).
+  desplegar:
+    name: Desplegar dataset a produccion
+    needs: validar
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Publicar dataset en produccion
+        run: python scripts/deploy_dataset.py
+
+      - name: Guardar cambios del despliegue en el repositorio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/produccion
+          git diff --cached --quiet || git commit -m "Despliegue automatico del dataset [skip ci]"
+          git push
