@@ -8,6 +8,7 @@ metricas, que es lo que despues alimenta el tablero de KPI's.
 """
 
 import csv
+import os
 import re
 import sys
 from collections import Counter
@@ -103,7 +104,14 @@ def revisar_filas(encabezado, filas):
 
 
 def resumir_en_metricas(filas, errores, filas_con_problema):
-    """Traduce la lista de errores en los numeros que van al historico de KPI's."""
+    """Traduce la lista de errores en los numeros que van al historico de KPI's.
+
+    El autor del cambio no lo pone quien corre el script, sino GitHub: el
+    workflow inyecta quien hizo el push como variable de entorno
+    (AUTOR_CAMBIO). Si el script corre fuera de GitHub Actions, por ejemplo
+    en el computador de alguien probando el proyecto, se deja constancia
+    de que fue una corrida local en vez de inventar un autor.
+    """
     total = len(filas)
     invalidos = len(filas_con_problema)
     validos = total - invalidos
@@ -115,6 +123,7 @@ def resumir_en_metricas(filas, errores, filas_con_problema):
 
     return {
         "timestamp_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "autor": os.environ.get("AUTOR_CAMBIO", "corrida local"),
         "total_registros": total,
         "registros_validos": validos,
         "registros_invalidos": invalidos,
@@ -131,19 +140,44 @@ def resumir_en_metricas(filas, errores, filas_con_problema):
 
 
 def registrar_en_historico(metricas: dict):
-    """Agrega una fila mas al historico de calidad, sin sobrescribir lo ya guardado.
+    """Agrega una fila mas al historico de calidad, sin perder lo ya guardado.
 
     Esto se hace pase o falle la validacion: el objetivo del historico es
     dar trazabilidad de todos los intentos, no solo de los que llegaron
     a produccion.
     """
     CARPETA_METRICAS.mkdir(parents=True, exist_ok=True)
-    archivo_ya_existia = RUTA_HISTORICO.exists()
+    columnas_nuevas = list(metricas.keys())
+
+    if not RUTA_HISTORICO.exists():
+        with open(RUTA_HISTORICO, "w", newline="", encoding="utf-8") as archivo:
+            escritor = csv.DictWriter(archivo, fieldnames=columnas_nuevas)
+            escritor.writeheader()
+            escritor.writerow(metricas)
+        return
+
+    with open(RUTA_HISTORICO, newline="", encoding="utf-8") as archivo:
+        lector = csv.DictReader(archivo)
+        columnas_actuales = lector.fieldnames or []
+        filas_previas = list(lector)
+
+    # Si el historico ya existia con menos columnas (por ejemplo, antes de
+    # agregar el autor de cada cambio), no tiene sentido perder ese
+    # historial: se completan las filas viejas con un valor por defecto y
+    # se reescribe el archivo completo con el esquema nuevo.
+    if columnas_actuales != columnas_nuevas:
+        for fila in filas_previas:
+            for columna in columnas_nuevas:
+                fila.setdefault(columna, "sin registrar")
+        filas_previas.append(metricas)
+        with open(RUTA_HISTORICO, "w", newline="", encoding="utf-8") as archivo:
+            escritor = csv.DictWriter(archivo, fieldnames=columnas_nuevas)
+            escritor.writeheader()
+            escritor.writerows(filas_previas)
+        return
 
     with open(RUTA_HISTORICO, "a", newline="", encoding="utf-8") as archivo:
-        escritor = csv.DictWriter(archivo, fieldnames=list(metricas.keys()))
-        if not archivo_ya_existia:
-            escritor.writeheader()
+        escritor = csv.DictWriter(archivo, fieldnames=columnas_nuevas)
         escritor.writerow(metricas)
 
 
