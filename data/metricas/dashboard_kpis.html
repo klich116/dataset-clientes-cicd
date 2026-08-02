@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>KPI's - Dataset de telefonos de clientes</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; margin: 0; padding: 32px; background: #f6f7f9; color: #1a1a1a; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  p.subtitulo { color: #555; margin-top: 0; }
+  .tarjetas { display: flex; gap: 16px; flex-wrap: wrap; margin: 24px 0; }
+  .tarjeta { background: white; border-radius: 10px; padding: 18px 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); min-width: 170px; }
+  .tarjeta .valor { font-size: 28px; font-weight: 700; }
+  .tarjeta .etiqueta { font-size: 13px; color: #666; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  th, td { padding: 10px 12px; text-align: left; font-size: 13px; border-bottom: 1px solid #eee; }
+  th { background: #fafafa; color: #444; font-weight: 600; }
+  .seccion { margin-top: 32px; }
+</style>
+</head>
+<body>
+  <h1>KPI's de calidad y trazabilidad - Dataset de telefonos de clientes</h1>
+  <p class="subtitulo">Ultima actualizacion: 2026-08-02T16:16:19Z - 4 corrida(s) del pipeline registradas</p>
+
+  <div class="tarjetas">
+    <div class="tarjeta"><div class="valor">100.0%</div><div class="etiqueta">Calidad (ultima corrida)</div></div>
+    <div class="tarjeta"><div class="valor">80.0%</div><div class="etiqueta">Consentimiento vigente</div></div>
+    <div class="tarjeta"><div class="valor">5</div><div class="etiqueta">Registros en el dataset</div></div>
+    <div class="tarjeta"><div class="valor">0</div><div class="etiqueta">Registros invalidos (ultima corrida)</div></div>
+    <div class="tarjeta"><div class="valor">75.0%</div><div class="etiqueta">Exito del pipeline (3/4)</div></div>
+  </div>
+
+  <div class="seccion">
+    <h2>Historico de corridas</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha (UTC)</th><th>Total</th><th>Validos</th><th>Invalidos</th>
+          <th>% Calidad</th><th>% Consent.</th><th>Dup. ID</th><th>Dup. Tel.</th>
+          <th>Tel. formato inv.</th><th>Consent. inv.</th><th>Resultado</th>
+        </tr>
+      </thead>
+      <tbody>
+<tr><td>2026-08-02T16:16:19Z</td><td>5</td><td>5</td><td>0</td><td>100.0%</td><td>80.0%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
+<tr><td>2026-08-02T16:08:43Z</td><td>5</td><td>5</td><td>0</td><td>100.0%</td><td>80.0%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
+<tr><td>2026-08-02T16:08:43Z</td><td>7</td><td>5</td><td>2</td><td>71.4%</td><td>71.4%</td><td>1</td><td>1</td><td>1</td><td>1</td><td style="color:#c62828; font-weight:600;">FALLIDA</td></tr>
+<tr><td>2026-08-02T16:08:38Z</td><td>5</td><td>5</td><td>0</td><td>100.0%</td><td>80.0%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

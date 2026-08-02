@@ -1,0 +1,5 @@
+timestamp_utc,total_registros,registros_validos,registros_invalidos,pct_calidad,pct_consentimiento,duplicados_id,duplicados_telefono,telefonos_formato_invalido,campos_vacios,consentimiento_invalido,total_errores,resultado
+2026-08-02T16:08:38Z,5,5,0,100.0,80.0,0,0,0,0,0,0,EXITOSA
+2026-08-02T16:08:43Z,7,5,2,71.4,71.4,1,1,1,0,1,4,FALLIDA
+2026-08-02T16:08:43Z,5,5,0,100.0,80.0,0,0,0,0,0,0,EXITOSA
+2026-08-02T16:16:19Z,5,5,0,100.0,80.0,0,0,0,0,0,0,EXITOSA
