@@ -31,9 +31,11 @@ def cargar_historico():
 def construir_fila(corrida: dict) -> str:
     """Arma una fila de la tabla de trazabilidad, coloreando el resultado segun corresponda."""
     color_resultado = "#1a7f37" if corrida["resultado"] == "EXITOSA" else "#c62828"
+    autor = corrida.get("autor", "sin registrar")
     return (
         "<tr>"
         f"<td>{corrida['timestamp_utc']}</td>"
+        f"<td>{autor}</td>"
         f"<td>{corrida['total_registros']}</td>"
         f"<td>{corrida['registros_validos']}</td>"
         f"<td>{corrida['registros_invalidos']}</td>"
@@ -46,6 +48,42 @@ def construir_fila(corrida: dict) -> str:
         f"<td style=\"color:{color_resultado}; font-weight:600;\">{corrida['resultado']}</td>"
         "</tr>"
     )
+
+
+def construir_grafico_tendencia(historico: list) -> str:
+    """Dibuja un grafico de linea con el porcentaje de calidad de cada corrida.
+
+    Se hace en SVG puro, sin librerias de graficos, para que el archivo
+    siga siendo autocontenido y se pueda abrir sin conexion a internet.
+    Cada punto se pinta del mismo color que su resultado, para que a
+    simple vista se note en que corridas hubo problemas.
+    """
+    ancho = max(520, len(historico) * 70)
+    alto = 160
+    margen = 28
+
+    valores = [float(corrida["pct_calidad"]) for corrida in historico]
+    cantidad = len(valores)
+    paso_x = (ancho - 2 * margen) / max(cantidad - 1, 1)
+
+    def ubicar(indice, valor):
+        x = margen + indice * paso_x
+        y = alto - margen - (valor / 100) * (alto - 2 * margen)
+        return x, y
+
+    coordenadas = [ubicar(i, v) for i, v in enumerate(valores)]
+    puntos_linea = " ".join(f"{x:.1f},{y:.1f}" for x, y in coordenadas)
+
+    marcadores = []
+    for indice, (x, y) in enumerate(coordenadas):
+        color = "#1a7f37" if historico[indice]["resultado"] == "EXITOSA" else "#c62828"
+        marcadores.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="4" fill="{color}" />')
+
+    return f"""<svg viewBox="0 0 {ancho} {alto}" width="100%" height="{alto}">
+  <line x1="{margen}" y1="{alto - margen}" x2="{ancho - margen}" y2="{alto - margen}" stroke="#ddd" />
+  <polyline points="{puntos_linea}" fill="none" stroke="#1f3864" stroke-width="2" />
+  {''.join(marcadores)}
+</svg>"""
 
 
 def calcular_resumen(historico: list) -> dict:
@@ -64,8 +102,11 @@ def armar_pagina(historico: list) -> str:
     ultima = resumen["ultima_corrida"]
 
     # La tabla se muestra de la corrida mas reciente a la mas antigua,
-    # que es el orden en que alguien de negocio normalmente la revisa.
+    # que es el orden en que alguien de negocio normalmente la revisa. El
+    # grafico, en cambio, va de mas antigua a mas reciente porque asi se
+    # lee una tendencia en el tiempo, de izquierda a derecha.
     filas_tabla = "\n".join(construir_fila(c) for c in reversed(historico))
+    grafico_tendencia = construir_grafico_tendencia(historico)
 
     return f"""<!DOCTYPE html>
 <html lang="es">
@@ -99,11 +140,19 @@ def armar_pagina(historico: list) -> str:
   </div>
 
   <div class="seccion">
+    <h2>Tendencia de calidad</h2>
+    <p class="subtitulo">Porcentaje de registros validos en cada corrida, de la mas antigua (izquierda) a la mas reciente (derecha)</p>
+    <div style="background:white; border-radius:10px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+      {grafico_tendencia}
+    </div>
+  </div>
+
+  <div class="seccion">
     <h2>Historico de corridas</h2>
     <table>
       <thead>
         <tr>
-          <th>Fecha (UTC)</th><th>Total</th><th>Validos</th><th>Invalidos</th>
+          <th>Fecha (UTC)</th><th>Autor</th><th>Total</th><th>Validos</th><th>Invalidos</th>
           <th>% Calidad</th><th>% Consent.</th><th>Dup. ID</th><th>Dup. Tel.</th>
           <th>Tel. formato inv.</th><th>Consent. inv.</th><th>Resultado</th>
         </tr>
