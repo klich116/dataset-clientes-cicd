@@ -54,7 +54,7 @@ def construir_fila(corrida: dict) -> str:
     )
     return (
         "<tr>"
-        f"<td class='mono tenue'>{corrida['timestamp_utc']}</td>"
+        f"<td class='mono tenue'>{corrida['fecha_hora']}</td>"
         f"<td>{autor}</td>"
         f"<td class='mono'>{corrida['total_registros']}</td>"
         f"<td class='mono'>{corrida['registros_validos']}</td>"
@@ -231,7 +231,7 @@ def armar_pagina(historico: list) -> str:
       <p class="marca">Veeduria de datos &middot; clientes</p>
       <h1>Calidad y trazabilidad del dataset de telefonos</h1>
     </div>
-    <div class="en-vivo"><span class="punto-vivo"></span>actualizado en cada corrida del pipeline &middot; {ultima['timestamp_utc']}</div>
+    <div class="en-vivo"><span class="punto-vivo"></span>actualizado en cada corrida del pipeline &middot; {ultima['fecha_hora']} (hora Bogot&aacute;)</div>
   </div>
 
   <div class="tarjetas">
@@ -255,7 +255,7 @@ def armar_pagina(historico: list) -> str:
       <table>
         <thead>
           <tr>
-            <th>Fecha (UTC)</th><th>Autor</th><th>Total</th><th>Validos</th><th>Invalidos</th>
+            <th>Fecha (Bogot&aacute;)</th><th>Autor</th><th>Total</th><th>Validos</th><th>Invalidos</th>
             <th>% Calidad</th><th>% Consent.</th><th>Dup. ID</th><th>Dup. Tel.</th>
             <th>Tel. inv.</th><th>Consent. inv.</th><th>Resultado</th>
           </tr>
