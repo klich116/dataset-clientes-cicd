@@ -13,13 +13,18 @@ import re
 import sys
 from collections import Counter
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 CARPETA_PROYECTO = Path(__file__).resolve().parent.parent
 RUTA_DATASET = CARPETA_PROYECTO / "data" / "clientes_telefonos.csv"
 CARPETA_METRICAS = CARPETA_PROYECTO / "data" / "metricas"
 RUTA_HISTORICO = CARPETA_METRICAS / "historico_calidad.csv"
+
+# Colombia no tiene horario de verano, asi que su diferencia con UTC es
+# siempre de 5 horas. Se deja como zona horaria fija en vez de depender
+# de una libreria externa de zonas horarias.
+ZONA_COLOMBIA = timezone(timedelta(hours=-5))
 
 COLUMNAS_OBLIGATORIAS = ["cliente_id", "nombre", "telefono", "pais", "consentimiento", "fecha_actualizacion"]
 
@@ -122,7 +127,7 @@ def resumir_en_metricas(filas, errores, filas_con_problema):
     )
 
     return {
-        "timestamp_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "fecha_hora": datetime.now(ZONA_COLOMBIA).strftime("%Y-%m-%d %H:%M:%S"),
         "autor": os.environ.get("AUTOR_CAMBIO", "corrida local"),
         "total_registros": total,
         "registros_validos": validos,
@@ -161,19 +166,22 @@ def registrar_en_historico(metricas: dict):
         columnas_actuales = lector.fieldnames or []
         filas_previas = list(lector)
 
-    # Si el historico ya existia con menos columnas (por ejemplo, antes de
-    # agregar el autor de cada cambio), no tiene sentido perder ese
-    # historial: se completan las filas viejas con un valor por defecto y
-    # se reescribe el archivo completo con el esquema nuevo.
+    # Si el historico ya existia con un esquema distinto (por ejemplo,
+    # antes de agregar el autor de cada cambio, o antes de pasar las
+    # fechas a hora de Colombia), no tiene sentido perder ese historial:
+    # se reconstruyen las filas viejas quedandose solo con las columnas
+    # que siguen existiendo, y rellenando las que son nuevas. Las columnas
+    # que ya no existen en el esquema nuevo simplemente se descartan.
     if columnas_actuales != columnas_nuevas:
-        for fila in filas_previas:
-            for columna in columnas_nuevas:
-                fila.setdefault(columna, "sin registrar")
-        filas_previas.append(metricas)
+        filas_migradas = [
+            {columna: fila.get(columna, "sin registrar") for columna in columnas_nuevas}
+            for fila in filas_previas
+        ]
+        filas_migradas.append(metricas)
         with open(RUTA_HISTORICO, "w", newline="", encoding="utf-8") as archivo:
             escritor = csv.DictWriter(archivo, fieldnames=columnas_nuevas)
             escritor.writeheader()
-            escritor.writerows(filas_previas)
+            escritor.writerows(filas_migradas)
         return
 
     with open(RUTA_HISTORICO, "a", newline="", encoding="utf-8") as archivo:
