@@ -3,68 +3,134 @@
 <head>
 <meta charset="UTF-8">
 <title>KPI's - Dataset de telefonos de clientes</title>
+
 <style>
-  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; margin: 0; padding: 32px; background: #f6f7f9; color: #1a1a1a; }
-  h1 { font-size: 22px; margin-bottom: 4px; }
-  p.subtitulo { color: #555; margin-top: 0; }
-  .tarjetas { display: flex; gap: 16px; flex-wrap: wrap; margin: 24px 0; }
-  .tarjeta { background: white; border-radius: 10px; padding: 18px 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); min-width: 170px; }
-  .tarjeta .valor { font-size: 28px; font-weight: 700; }
-  .tarjeta .etiqueta { font-size: 13px; color: #666; margin-top: 4px; }
-  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-  th, td { padding: 10px 12px; text-align: left; font-size: 13px; border-bottom: 1px solid #eee; }
-  th { background: #fafafa; color: #444; font-weight: 600; }
-  .seccion { margin-top: 32px; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 40px 48px 64px;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(94,234,212,0.08), transparent 40%),
+      radial-gradient(circle at 85% 15%, rgba(251,191,36,0.06), transparent 35%),
+      #0b0e14;
+    color: #e6e8ec;
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  .tenue { color: #8b93a3; }
+
+  .encabezado { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 36px; }
+  .marca { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #5eead4; margin: 0 0 10px; }
+  h1 {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: 30px; font-weight: 500; margin: 0; letter-spacing: -0.01em;
+  }
+  .en-vivo { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: #8b93a3; }
+  .punto-vivo { width: 7px; height: 7px; border-radius: 50%; background: #5eead4; box-shadow: 0 0 0 0 rgba(94,234,212,0.7); animation: pulso 2s infinite; }
+  @keyframes pulso {
+    0%   { box-shadow: 0 0 0 0 rgba(94,234,212,0.55); }
+    70%  { box-shadow: 0 0 0 8px rgba(94,234,212,0); }
+    100% { box-shadow: 0 0 0 0 rgba(94,234,212,0); }
+  }
+
+  .tarjetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 40px; }
+  .tarjeta {
+    position: relative; overflow: hidden;
+    background: #12161f; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px;
+    padding: 20px 20px 18px; padding-left: 22px;
+  }
+  .tarjeta::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, #5eead4, #22d3ee);
+  }
+  .tarjeta.alerta::before { background: linear-gradient(180deg, #fbbf24, #fb7185); }
+  .tarjeta .valor { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 30px; font-weight: 600; color: #f4f6f8; }
+  .tarjeta .etiqueta { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; color: #8b93a3; margin-top: 6px; }
+
+  .seccion { margin-top: 40px; }
+  .titulo-seccion { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .indice-seccion { font-family: ui-monospace, monospace; font-size: 12px; color: #5eead4; }
+  h2 { font-family: Georgia, "Iowan Old Style", serif; font-size: 18px; font-weight: 500; margin: 0; color: #f4f6f8; }
+  .subtitulo { color: #8b93a3; font-size: 13px; margin: 2px 0 16px; }
+
+  .panel { background: #12161f; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 11px 14px; text-align: left; font-size: 12.5px; border-bottom: 1px solid rgba(255,255,255,0.06); white-space: nowrap; }
+  th { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: #8b93a3; font-weight: 600; text-align: left; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .tabla-scroll { overflow-x: auto; }
+
+  footer { margin-top: 48px; font-size: 11px; color: #565e6c; text-align: center; }
 </style>
+
 </head>
 <body>
-  <h1>KPI's de calidad y trazabilidad - Dataset de telefonos de clientes</h1>
-  <p class="subtitulo">Ultima actualizacion: 2026-08-02T21:44:01Z - 11 corrida(s) del pipeline registradas</p>
+
+  <div class="encabezado">
+    <div>
+      <p class="marca">Veeduria de datos &middot; clientes</p>
+      <h1>Calidad y trazabilidad del dataset de telefonos</h1>
+    </div>
+    <div class="en-vivo"><span class="punto-vivo"></span>actualizado en cada corrida del pipeline &middot; 2026-08-02T21:49:56Z</div>
+  </div>
 
   <div class="tarjetas">
-    <div class="tarjeta"><div class="valor">100.0%</div><div class="etiqueta">Calidad (ultima corrida)</div></div>
+    <div class="tarjeta"><div class="valor">100.0%</div><div class="etiqueta">Calidad, ultima corrida</div></div>
     <div class="tarjeta"><div class="valor">90.0%</div><div class="etiqueta">Consentimiento vigente</div></div>
     <div class="tarjeta"><div class="valor">10</div><div class="etiqueta">Registros en el dataset</div></div>
-    <div class="tarjeta"><div class="valor">0</div><div class="etiqueta">Registros invalidos (ultima corrida)</div></div>
-    <div class="tarjeta"><div class="valor">90.9%</div><div class="etiqueta">Exito del pipeline (10/11)</div></div>
+    <div class="tarjeta"><div class="valor">0</div><div class="etiqueta">Invalidos, ultima corrida</div></div>
+    <div class="tarjeta"><div class="valor">91.7%</div><div class="etiqueta">Exito del pipeline (11/12)</div></div>
   </div>
 
   <div class="seccion">
-    <h2>Tendencia de calidad</h2>
-    <p class="subtitulo">Porcentaje de registros validos en cada corrida, de la mas antigua (izquierda) a la mas reciente (derecha)</p>
-    <div style="background:white; border-radius:10px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-      <svg viewBox="0 0 770 160" width="100%" height="160">
-  <line x1="28" y1="132" x2="742" y2="132" stroke="#ddd" />
-  <polyline points="28.0,28.0 99.4,57.7 170.8,28.0 242.2,28.0 313.6,28.0 385.0,28.0 456.4,28.0 527.8,28.0 599.2,28.0 670.6,28.0 742.0,28.0" fill="none" stroke="#1f3864" stroke-width="2" />
-  <circle cx="28.0" cy="28.0" r="4" fill="#1a7f37" /><circle cx="99.4" cy="57.7" r="4" fill="#c62828" /><circle cx="170.8" cy="28.0" r="4" fill="#1a7f37" /><circle cx="242.2" cy="28.0" r="4" fill="#1a7f37" /><circle cx="313.6" cy="28.0" r="4" fill="#1a7f37" /><circle cx="385.0" cy="28.0" r="4" fill="#1a7f37" /><circle cx="456.4" cy="28.0" r="4" fill="#1a7f37" /><circle cx="527.8" cy="28.0" r="4" fill="#1a7f37" /><circle cx="599.2" cy="28.0" r="4" fill="#1a7f37" /><circle cx="670.6" cy="28.0" r="4" fill="#1a7f37" /><circle cx="742.0" cy="28.0" r="4" fill="#1a7f37" />
-</svg>
+    <div class="titulo-seccion"><span class="indice-seccion">01</span><h2>Tendencia de calidad</h2></div>
+    <p class="subtitulo">Porcentaje de registros validos por corrida, de la mas antigua (izquierda) a la mas reciente (derecha)</p>
+    <div class="panel"><svg viewBox="0 0 840 200" width="100%" height="200">
+  <defs>
+    <linearGradient id="degradadoTendencia" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5eead4" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#5eead4" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <line x1="40" y1="170.0" x2="820" y2="170.0" stroke="rgba(255,255,255,0.06)" stroke-dasharray="3 4" /><text x="4" y="174.0" font-size="10" fill="#8b93a3" font-family="ui-monospace, monospace">0</text><line x1="40" y1="95.0" x2="820" y2="95.0" stroke="rgba(255,255,255,0.06)" stroke-dasharray="3 4" /><text x="4" y="99.0" font-size="10" fill="#8b93a3" font-family="ui-monospace, monospace">50</text><line x1="40" y1="20.0" x2="820" y2="20.0" stroke="rgba(255,255,255,0.06)" stroke-dasharray="3 4" /><text x="4" y="24.0" font-size="10" fill="#8b93a3" font-family="ui-monospace, monospace">100</text>
+  <polygon points="40.0,170.0 40.0,20.0 110.9,62.9 181.8,20.0 252.7,20.0 323.6,20.0 394.5,20.0 465.5,20.0 536.4,20.0 607.3,20.0 678.2,20.0 749.1,20.0 820.0,20.0 820.0,170.0" fill="url(#degradadoTendencia)" />
+  <polyline points="40.0,20.0 110.9,62.9 181.8,20.0 252.7,20.0 323.6,20.0 394.5,20.0 465.5,20.0 536.4,20.0 607.3,20.0 678.2,20.0 749.1,20.0 820.0,20.0" fill="none" stroke="#5eead4" stroke-width="2" />
+  <circle cx="40.0" cy="20.0" r="3.5" fill="#5eead4" stroke="#0b0e14" stroke-width="1.5" /><circle cx="110.9" cy="62.9" r="3.5" fill="#fb7185" stroke="#0b0e14" stroke-width="1.5" /><circle cx="181.8" cy="20.0" r="3.5" fill="#5eead4" stroke="#0b0e14" stroke-width="1.5" /><circle cx="252.7" cy="20.0" r="3.5" fill="#5eead4" stroke="#0b0e14" stroke-width="1.5" /><circle cx="323.6" cy="20.0" r="3.5" fill="#5eead4" stroke="#0b0e14" stroke-width="1.5" /><circle cx="394.5" cy="20.0" r="3.5" fill="#5eead4" stroke="#0b0e14" stroke-width="1.5" /><circle cx="465.5" cy="20.0" r="3.5" fill="#5eead4" stroke="#0b0e14" stroke-width="1.5" /><circle cx="536.4" cy="20.0" r="3.5" fill="#5eead4" stroke="#0b0e14" stroke-width="1.5" /><circle cx="607.3" cy="20.0" r="3.5" fill="#5eead4" stroke="#0b0e14" stroke-width="1.5" /><circle cx="678.2" cy="20.0" r="3.5" fill="#5eead4" stroke="#0b0e14" stroke-width="1.5" /><circle cx="749.1" cy="20.0" r="3.5" fill="#5eead4" stroke="#0b0e14" stroke-width="1.5" /><circle cx="820.0" cy="20.0" r="3.5" fill="#5eead4" stroke="#0b0e14" stroke-width="1.5" />
+</svg></div>
+  </div>
+
+  <div class="seccion">
+    <div class="titulo-seccion"><span class="indice-seccion">02</span><h2>Historico de corridas</h2></div>
+    <p class="subtitulo">Bitacora completa: quien hizo el cambio, que tan bien paso la validacion, y si se desplego</p>
+    <div class="panel tabla-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha (UTC)</th><th>Autor</th><th>Total</th><th>Validos</th><th>Invalidos</th>
+            <th>% Calidad</th><th>% Consent.</th><th>Dup. ID</th><th>Dup. Tel.</th>
+            <th>Tel. inv.</th><th>Consent. inv.</th><th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+<tr><td class='mono tenue'>2026-08-02T21:49:56Z</td><td>klich116</td><td class='mono'>10</td><td class='mono'>10</td><td class='mono'>0</td><td class='mono'>100.0%</td><td class='mono'>90.0%</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td><span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:11px; letter-spacing:0.04em; background:#5eead422; color:#5eead4; border:1px solid #5eead455;"><span style="width:6px; height:6px; border-radius:50%; background:#5eead4;"></span>EXITOSA</span></td></tr>
+<tr><td class='mono tenue'>2026-08-02T21:44:01Z</td><td>klich116</td><td class='mono'>10</td><td class='mono'>10</td><td class='mono'>0</td><td class='mono'>100.0%</td><td class='mono'>90.0%</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td><span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:11px; letter-spacing:0.04em; background:#5eead422; color:#5eead4; border:1px solid #5eead455;"><span style="width:6px; height:6px; border-radius:50%; background:#5eead4;"></span>EXITOSA</span></td></tr>
+<tr><td class='mono tenue'>2026-08-02T21:39:52Z</td><td>klich116</td><td class='mono'>9</td><td class='mono'>9</td><td class='mono'>0</td><td class='mono'>100.0%</td><td class='mono'>88.9%</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td><span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:11px; letter-spacing:0.04em; background:#5eead422; color:#5eead4; border:1px solid #5eead455;"><span style="width:6px; height:6px; border-radius:50%; background:#5eead4;"></span>EXITOSA</span></td></tr>
+<tr><td class='mono tenue'>2026-08-02T21:38:46Z</td><td>corrida local</td><td class='mono'>8</td><td class='mono'>8</td><td class='mono'>0</td><td class='mono'>100.0%</td><td class='mono'>87.5%</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td><span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:11px; letter-spacing:0.04em; background:#5eead422; color:#5eead4; border:1px solid #5eead455;"><span style="width:6px; height:6px; border-radius:50%; background:#5eead4;"></span>EXITOSA</span></td></tr>
+<tr><td class='mono tenue'>2026-08-02T21:37:52Z</td><td>corrida local</td><td class='mono'>8</td><td class='mono'>8</td><td class='mono'>0</td><td class='mono'>100.0%</td><td class='mono'>87.5%</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td><span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:11px; letter-spacing:0.04em; background:#5eead422; color:#5eead4; border:1px solid #5eead455;"><span style="width:6px; height:6px; border-radius:50%; background:#5eead4;"></span>EXITOSA</span></td></tr>
+<tr><td class='mono tenue'>2026-08-02T21:24:23Z</td><td>sin registrar</td><td class='mono'>8</td><td class='mono'>8</td><td class='mono'>0</td><td class='mono'>100.0%</td><td class='mono'>87.5%</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td><span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:11px; letter-spacing:0.04em; background:#5eead422; color:#5eead4; border:1px solid #5eead455;"><span style="width:6px; height:6px; border-radius:50%; background:#5eead4;"></span>EXITOSA</span></td></tr>
+<tr><td class='mono tenue'>2026-08-02T21:18:34Z</td><td>sin registrar</td><td class='mono'>7</td><td class='mono'>7</td><td class='mono'>0</td><td class='mono'>100.0%</td><td class='mono'>85.7%</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td><span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:11px; letter-spacing:0.04em; background:#5eead422; color:#5eead4; border:1px solid #5eead455;"><span style="width:6px; height:6px; border-radius:50%; background:#5eead4;"></span>EXITOSA</span></td></tr>
+<tr><td class='mono tenue'>2026-08-02T21:13:41Z</td><td>sin registrar</td><td class='mono'>6</td><td class='mono'>6</td><td class='mono'>0</td><td class='mono'>100.0%</td><td class='mono'>83.3%</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td><span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:11px; letter-spacing:0.04em; background:#5eead422; color:#5eead4; border:1px solid #5eead455;"><span style="width:6px; height:6px; border-radius:50%; background:#5eead4;"></span>EXITOSA</span></td></tr>
+<tr><td class='mono tenue'>2026-08-02T16:16:19Z</td><td>sin registrar</td><td class='mono'>5</td><td class='mono'>5</td><td class='mono'>0</td><td class='mono'>100.0%</td><td class='mono'>80.0%</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td><span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:11px; letter-spacing:0.04em; background:#5eead422; color:#5eead4; border:1px solid #5eead455;"><span style="width:6px; height:6px; border-radius:50%; background:#5eead4;"></span>EXITOSA</span></td></tr>
+<tr><td class='mono tenue'>2026-08-02T16:08:43Z</td><td>sin registrar</td><td class='mono'>5</td><td class='mono'>5</td><td class='mono'>0</td><td class='mono'>100.0%</td><td class='mono'>80.0%</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td><span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:11px; letter-spacing:0.04em; background:#5eead422; color:#5eead4; border:1px solid #5eead455;"><span style="width:6px; height:6px; border-radius:50%; background:#5eead4;"></span>EXITOSA</span></td></tr>
+<tr><td class='mono tenue'>2026-08-02T16:08:43Z</td><td>sin registrar</td><td class='mono'>7</td><td class='mono'>5</td><td class='mono'>2</td><td class='mono'>71.4%</td><td class='mono'>71.4%</td><td class='mono tenue'>1</td><td class='mono tenue'>1</td><td class='mono tenue'>1</td><td class='mono tenue'>1</td><td><span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:11px; letter-spacing:0.04em; background:#fb718522; color:#fb7185; border:1px solid #fb718555;"><span style="width:6px; height:6px; border-radius:50%; background:#fb7185;"></span>FALLIDA</span></td></tr>
+<tr><td class='mono tenue'>2026-08-02T16:08:38Z</td><td>sin registrar</td><td class='mono'>5</td><td class='mono'>5</td><td class='mono'>0</td><td class='mono'>100.0%</td><td class='mono'>80.0%</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td class='mono tenue'>0</td><td><span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:11px; letter-spacing:0.04em; background:#5eead422; color:#5eead4; border:1px solid #5eead455;"><span style="width:6px; height:6px; border-radius:50%; background:#5eead4;"></span>EXITOSA</span></td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <div class="seccion">
-    <h2>Historico de corridas</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Fecha (UTC)</th><th>Autor</th><th>Total</th><th>Validos</th><th>Invalidos</th>
-          <th>% Calidad</th><th>% Consent.</th><th>Dup. ID</th><th>Dup. Tel.</th>
-          <th>Tel. formato inv.</th><th>Consent. inv.</th><th>Resultado</th>
-        </tr>
-      </thead>
-      <tbody>
-<tr><td>2026-08-02T21:44:01Z</td><td>klich116</td><td>10</td><td>10</td><td>0</td><td>100.0%</td><td>90.0%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
-<tr><td>2026-08-02T21:39:52Z</td><td>klich116</td><td>9</td><td>9</td><td>0</td><td>100.0%</td><td>88.9%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
-<tr><td>2026-08-02T21:38:46Z</td><td>corrida local</td><td>8</td><td>8</td><td>0</td><td>100.0%</td><td>87.5%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
-<tr><td>2026-08-02T21:37:52Z</td><td>corrida local</td><td>8</td><td>8</td><td>0</td><td>100.0%</td><td>87.5%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
-<tr><td>2026-08-02T21:24:23Z</td><td>sin registrar</td><td>8</td><td>8</td><td>0</td><td>100.0%</td><td>87.5%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
-<tr><td>2026-08-02T21:18:34Z</td><td>sin registrar</td><td>7</td><td>7</td><td>0</td><td>100.0%</td><td>85.7%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
-<tr><td>2026-08-02T21:13:41Z</td><td>sin registrar</td><td>6</td><td>6</td><td>0</td><td>100.0%</td><td>83.3%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
-<tr><td>2026-08-02T16:16:19Z</td><td>sin registrar</td><td>5</td><td>5</td><td>0</td><td>100.0%</td><td>80.0%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
-<tr><td>2026-08-02T16:08:43Z</td><td>sin registrar</td><td>5</td><td>5</td><td>0</td><td>100.0%</td><td>80.0%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
-<tr><td>2026-08-02T16:08:43Z</td><td>sin registrar</td><td>7</td><td>5</td><td>2</td><td>71.4%</td><td>71.4%</td><td>1</td><td>1</td><td>1</td><td>1</td><td style="color:#c62828; font-weight:600;">FALLIDA</td></tr>
-<tr><td>2026-08-02T16:08:38Z</td><td>sin registrar</td><td>5</td><td>5</td><td>0</td><td>100.0%</td><td>80.0%</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:#1a7f37; font-weight:600;">EXITOSA</td></tr>
-      </tbody>
-    </table>
-  </div>
+  <footer>Generado automaticamente por scripts/generar_kpis.py &middot; no requiere conexion a internet</footer>
+
 </body>
 </html>
