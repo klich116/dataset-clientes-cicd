@@ -44,6 +44,17 @@ def dejar_constancia(marca_tiempo: str, destino: Path, total_registros: int):
 
     Usa la misma marca de tiempo con la que se nombro el archivo, para
     que el nombre del archivo y la fila del log siempre coincidan.
+
+    Nota sobre el historial: las primeras corridas de este proyecto
+    guardaban la marca de tiempo en UTC con sufijo "Z"
+    (20260802T160239Z) y la columna se llamaba "timestamp_utc". Despues
+    cambie a hora de Colombia sin el sufijo (2026-08-02_17-16-12), que
+    es el formato que se usa desde entonces. No reescribo los nombres
+    de archivo ni las filas viejas del log para no alterar un registro
+    de auditoria real; el encabezado de la columna si se actualizo a
+    "fecha_hora" para reflejar el formato vigente. Si algun dia se
+    necesita, la forma de distinguir una marca vieja de una nueva es
+    que las viejas terminan en "Z" y las nuevas no.
     """
     log_ya_existia = REGISTRO_DESPLIEGUES.exists()
     with open(REGISTRO_DESPLIEGUES, "a", newline="", encoding="utf-8") as archivo:
