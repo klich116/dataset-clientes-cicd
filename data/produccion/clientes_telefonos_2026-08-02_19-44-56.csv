@@ -1,0 +1,14 @@
+cliente_id,nombre,telefono,pais,consentimiento,fecha_actualizacion
+C001,Ana Torres,+573001234567,CO,true,2026-07-15
+C002,Luis Gomez,+573109876543,CO,true,2026-07-16
+C003,Marta Ruiz,+34911234567,ES,true,2026-07-18
+C004,Pedro Diaz,+521551234567,MX,true,2026-07-20
+C005,Sofia Leon,+573201112233,CO,false,2026-07-21
+C006,Sofia Ramirez,+573151234567,CO,true,2026-08-02
+C007,Diego Mora,+573201234567,CO,true,2026-08-02
+C008,Laura Vidal,+573167654321,CO,true,2026-08-02
+C009,Camila Ríos,+573001112233,CO,true,2026-08-02
+C010,Andres Peña,+573187654321,CO,true,2026-08-02
+C011,Julian Torres,+573159998877,CO,true,2026-08-02
+C012,Valentina Cruz,+573102223344,CO,true,2026-08-02
+C013,Mariana Ospina,+573114455667,CO,true,2026-08-02
